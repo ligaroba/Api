@@ -1,0 +1,299 @@
+<?php 
+
+if(isset($_POST['tag']) && isset($_POST['tag'])!=''){	
+	$tag=$_POST['tag'];
+
+	$response = array('tag'=>$tag,'success'=>0,'error'=>0);
+	
+	require_once './include/function.php';
+	$db= new DBHandler();
+$responses["response"] = array();
+	
+	if($tag=='register_user'){
+		
+		$tel=strtoupper($_POST['telno']);
+		$fname=strtoupper($_POST['fname']);
+		$lname=strtoupper($_POST['lname']);
+		$email=strtoupper($_POST['email']);
+		$username=strtoupper($_POST['username']);
+		$password=$_POST['password'];
+	
+		
+				
+		$user=$db->createUser($tel,$fname,$lname,$email,$username,$password);
+		
+		if ($user=="USER_CREATE_FAILED"){
+			$response['error']=-1;
+			$response['error_msg']="USER_CREATE_FAILED";
+			echo json_encode($response);			
+		}elseif($user=="USERNAME_HAS_BEEN_TAKEN"){
+			
+			$response['error']=3;
+			$response['error_msg']="USERNAME_ALREADY_EXISTED";		
+			echo json_encode($response);
+							
+			
+		} elseif($user=="EMAIL_ALREADY_EXISTS"){
+			$response['error']=1;
+			$response['error_msg']="EMAIL_ALREADY_EXISTED";	
+			
+					
+			echo json_encode($response);
+		}
+		elseif($user=="NUMBER_ALREADY_EXISTS"){
+			$response['error']=2;
+			$response['error_msg']="NUMBER_ALREADY_EXISTED";
+					
+			echo json_encode($response);
+		}
+		else{
+			
+			
+			$userdata=$db->getId('users','api_key',$user);
+			$alluser=$userdata->fetchAll(PDO::FETCH_ASSOC);
+		foreach($alluser as $users){
+			$response['success']=1;
+			$response['userid']=$users['telno'];
+			$response['user']['fname']=$users['firstname'];
+			$response['user']['lname']=$users['secondname'];
+			$response['user']['email']=$users['email'];
+			$response['user']['username']=$users['username'];
+			$response['user']['created_at']=$users['created_at'];
+		}
+		       
+			
+			echo json_encode($response);
+		}
+	
+		
+	
+		
+	}else
+	if($tag=='login_user'){
+		
+		        $tel=$_POST['telno'];
+				$password=$_POST['password'];
+				
+				$login=$db->checkLogin($tel,$password);
+			
+			if(!$login==4&&!$login==5){
+				$response['success']=2;
+				$response['userid']=$login['telNO'];
+				$response['user']['fname']=$login['firstName'];
+				$response['user']['fname']=$login['lastName'];
+				$response['user']['email']=$login['email'];
+				$response['user']['cretated_at']=$login['created_at'];
+				
+				echo json_encode($response);
+			}elseif ($login==4){
+				
+				$response['error']=4;
+				$response['error_msg']="WRONG_LOGIN_CREDENTIALS";
+				
+				echo json_encode($response);
+				
+			}elseif ($login==5){
+				
+				$response['error']=5;
+				$response['error_msg']="USER_DOESNT_EXIST";
+				
+				echo json_encode($response);
+				
+			}
+				
+}elseif($tag=='register_asset'){
+		
+		$assetid=strtoupper($_POST['assetid']);
+		$tel=strtoupper($_POST['tel']);
+		$model=strtoupper($_POST['model']);
+		$category=strtoupper($_POST['category']);
+		$group_name=strtoupper($_POST['group_name']);
+		$capacity=strtoupper($_POST['capacity']);
+		$typeasset=strtoupper($_POST['typeasset']);
+		$driverid=strtoupper($_POST['driverid']);
+		$assistantid=strtoupper($_POST['assistantid']);
+		
+				
+$asset=$db->createAsset($assetid,$telNO,$model,$category,$group_name,$capacity,$typeasset,$driverid,$assistantid);
+	
+		if ($asset=="ASSISTANT_ALREADY_EXISTS"){
+			$response['error']=7;
+			$response['error_msg']="ASSISTANT_ALREADY_EXISTED";
+			
+			echo json_encode($response);
+						
+		}elseif($asset=="ASSET_CREATE_FAILED"){
+			$response['error']=-1;
+			$response['error_msg']="ASSET_CREATE_FAILED";
+			
+						
+			echo json_encode($response);
+		} elseif($asset=="ASSET_ALREADY_EXISTS"){
+			$response['error']=5;
+			$response['error_msg']="ASSET_ALREADY_EXISTED";	
+			
+				
+			echo json_encode($response);
+		}
+		elseif($asset=="DRIVER_ALREADY_EXISTS"){
+			$response['error']=6;
+			$response['error_msg']="DRIVER_ALREADY_EXISTED";
+					
+			echo json_encode($response);
+		}
+		else{
+			
+			
+			$assetdata=$db->$this->getId('asset','assetid',$asset);
+			$allasset=$assetdata->fetchAll(PDO::FETCH_ASSOC);
+		foreach($allasset as $assets){
+			$response['success']=3;
+			$response['assetid']=$assets['assetid'];
+			$response['asset']['tel']=$assets['tel'];
+			$response['asset']['model']=$assets['model'];
+			$response['asset']['category']=$assets['category'];
+			$response['asset']['group_name']=$assets['group_name'];
+			$response['asset']['capacity']=$assets['capacity'];
+			$response['asset']['typeasset']=$assets['typeasset'];
+			$response['asset']['driverid']=$assets['driverid'];
+			$response['asset']['assistantid']=$assets['assistantid'];
+			$response['asset']['created_at']=$assets['created_at'];
+			echo json_encode($response);
+		}
+		}
+	
+		
+}elseif($tag=='delete'){
+				$tablename=$_POST['tablename'];
+				$colid=$_POST['colid'];
+				$rec_id=$_POST['recid'];
+				
+				
+				$delete=$db->deleterecord($tablename,0,$colid,$rec_id);
+			
+			if($delete==10){
+				$response['success']=10;
+				$response['msg']="SUCCESSFULLY DELETED";
+			
+								
+				echo json_encode($response);
+			}elseif ($delete==8){
+				
+				$response['error']=8;
+				$response['error_msg']="DELETION FAILED";
+				
+				
+				echo json_encode($response);
+				
+			}
+				
+}elseif ($tag=='register_group'){
+			
+			
+				
+				$group_name=$_POST['group_name'];
+				
+				
+				$group_data=$db->newgroup($group_name);
+
+			
+				
+			//print_r($alldata);
+		if($group_data=="GROUP_CREATE_FAILED"){
+			
+				$response['error']=1;
+				$response['error_msg']="GROUP CREATION FAILED";
+				
+					echo json_encode($response);
+				
+			}elseif ($group_data=="GROUP_EXISTS"){
+				
+					$response['error']=5;
+					$response['error_msg']="GROUP_EXISTS";
+			
+					echo json_encode($response);
+					
+				
+			}else{
+				    
+				$groupinfo=$db->getId('group_table','group_name',$group_data);
+				$alldata=$groupinfo->fetchAll(PDO::FETCH_ASSOC);
+				foreach($alldata as $group ){
+					
+					$response['success']=4;
+					$response['groupid']=$group['group_id'];
+					$response['group']['group_name']=$group['group_name'];
+					$response['group']['created_at']=$group['created_at'];
+				
+				 }
+				
+							
+				echo json_encode($response);
+				//print_r($alldata);
+	
+			}
+				
+				
+			
+	
+	
+}elseif($tag=='update_group'){//takes success 5
+				
+
+					 	
+}elseif($tag=='delete_group'){
+			
+}elseif($tag=='update_asset'){//takes success 6
+
+
+}elseif($tag=='get_all_data'){//takes success 7
+			$tablename=$_POST['tablename'];		
+			$fetchdata=$db->getAllItems($tablename);
+			
+		if($fetchdata!=null){
+			$response['success']=7;
+			       
+			     $rows = array();
+	 while($row = $fetchdata->fetchAll(PDO::FETCH_ASSOC)) {
+	 	
+				$rows[] = $row;
+				$response['data']= 
+						$rows[0];
+						
+				
+			   }
+			  
+			   // print_r($row );
+			echo json_encode($response);
+	
+			
+  /*		$data=$fetchdata->fetchAll(PDO::FETCH_ASSOC);
+			$response['success']=7;			
+			echo  json_encode(array_merge($response,$data));*/
+		   
+		}else{
+			$response['error']=7;
+			$response['error_msg']="Please add Items to your dashboard";
+			echo json_encode($response);			
+		}
+			
+					
+}else {
+	echo "Invalid Request";
+	
+}//endo of if(isset($_POST['tag']) && isset($_POST['tag'])!='')
+
+
+
+}else {
+	echo "Access denied";
+
+}		
+	
+		
+		
+
+
+
+
+?>

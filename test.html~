@@ -1,0 +1,29 @@
+<!Doctype HTML>
+<HTML>
+<HEAD> </head>
+<body>
+<form action="index.php" method="post" >
+	<input type="text" name="tag" placeholder="tag"><br>
+	<input type="text" name="groupname" placeholder="groupname" ><br>
+	<input type="text" name="fname"  placeholder="fname" ><br>
+	<input type="text" name="lname"><br>
+<input type="text" name="username"><br>
+	<input type="text" name="email" ><br>
+	<input type="password" name="password"><br><br><br>
+	
+
+
+
+<input type="text" name="capacity" ><br><br>	
+	
+
+
+<input type="text" name="typeasset"><br>
+	<input type="text" name="driverid" ><br>
+	<input type="text" name="assistantid">
+	<input type="submit" value="submit">
+
+</form>
+
+</body>
+</HTML>

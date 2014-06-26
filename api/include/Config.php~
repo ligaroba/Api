@@ -1,0 +1,30 @@
+<?php
+// database configurations 
+define('DB_USERNAME','postgres');
+define('DB_PASSWORD','o20i5n152');
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'MtokaDb');
+define('DB_PORT', '5432');
+
+// error message codes 
+define('ASSET_CREATE_FAILED', -1);
+define('USER_CREATE_FAILED', 0);
+define('EMAIL_ALREADY_EXISTS', 1);
+define('NUMBER_ALREADY_EXISTS', 2);
+define('USERNAME_HAS_BEEN_TAKEN', 3);
+define('WRONG_LOGIN_CREDENTIALS', 4);
+define('ASSET_ALREADY_EXISTS', 5);
+define('DRIVER_ALREADY_EXISTS', 6);
+define('ASSISTANT_ALREADY_EXISTS', 7);
+define('DELETION_FAILED', 8);
+define('GROUP_EXISTS', 9);
+
+// succes message codes 
+define('SUCCESSFUL', 10);
+
+
+
+
+
+
+?>
